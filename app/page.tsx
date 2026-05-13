@@ -155,16 +155,16 @@ export default function HomePage() {
               artefacts.
             </motion.p>
 
-            {/* Tamil accent text */}
+            {/* Meetei Mayek accent text */}
             <motion.p
               custom={2.5}
               variants={fadeUp}
               initial="hidden"
               animate="show"
-              className="font-tamil text-xs text-muted-foreground/40 mb-8 tracking-wide"
+              className="font-meitei text-l text-muted-foreground/40 mb-8 tracking-wide"
               aria-hidden="true"
             >
-              உத்வேகம் · ஆய்வு · உத்தி — Idea · Analysis · Strategy
+              ꯋꯥꯈꯜ · ꯊꯤꯖꯤꯟꯕꯥ · ꯊꯧꯔꯥꯡ — Idea · Analysis · Strategy
             </motion.p>
 
             {/* Action */}
@@ -364,8 +364,8 @@ export default function HomePage() {
             <p className="text-xs text-muted-foreground/50 font-mono">
               {APP_NAME} · Multi-Agent Startup Intelligence
             </p>
-            <p className="font-tamil text-xs text-muted-foreground/30" aria-hidden="true">
-              வெற்றி
+            <p className="font-meitei text-xs text-muted-foreground/30" aria-hidden="true">
+              ꯃꯥꯏꯄꯥꯛꯄꯥ
             </p>
           </div>
         </footer>

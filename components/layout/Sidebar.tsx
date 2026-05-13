@@ -9,17 +9,13 @@ import {
   ChevronRight,
   Cpu,
   Settings,
-  SunMedium,
-  Moon,
   History,
   Trash2,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useAnalysisStore } from "@/store/analysis-store";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { truncate, formatDate, cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 
@@ -27,7 +23,6 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { resolvedTheme, setTheme } = useTheme();
   const { savedAnalyses, loadAnalysis, deleteAnalysis } = useAnalysisStore();
 
   useEffect(() => { setMounted(true); }, []);
@@ -157,8 +152,7 @@ export function Sidebar() {
       <Separator className="mt-auto" />
 
       {/* Bottom: Theme + Settings */}
-      <div className="flex items-center justify-between px-3 py-2">
-        <ThemeToggle />
+      <div className="flex items-center justify-end px-3 py-2">
         {!collapsed && (
           <Link
             href="#"

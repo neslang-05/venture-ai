@@ -59,12 +59,12 @@ function generateMockScores(idea: string) {
     hash |= 0;
   }
   const absHash = Math.abs(hash);
-  
+
   const severityScore = 6 + (absHash % 5);
   const tamScore = 6 + ((absHash >> 1) % 5);
   const whitespaceScore = 6 + ((absHash >> 2) % 5);
   const frequencyScore = 6 + ((absHash >> 3) % 5);
-  
+
   const sum = severityScore + tamScore + whitespaceScore + frequencyScore;
   const itchScore = Math.round((sum / 40) * 100);
 
@@ -74,9 +74,9 @@ function generateMockScores(idea: string) {
 function normalizeResult(raw: Record<string, unknown>, fallbackIdea: string = ""): AnalysisResult {
   const str = (v: unknown) => (typeof v === "string" ? v : "");
   const num = (v: unknown) => (typeof v === "number" ? v : 0);
-  
+
   const rawScores = (raw.scores as Record<string, unknown>) || {};
-  
+
   let finalScores;
   if (typeof rawScores.itchScore === "number" && rawScores.itchScore > 0) {
     finalScores = {
@@ -239,7 +239,7 @@ export async function POST(req: NextRequest) {
 
     const raw = await upstream.json();
     let content = raw.choices?.[0]?.message?.content || "{}";
-    
+
     // Clean up potential markdown JSON wrapping just in case
     content = content.replace(/^\s*```json/i, '').replace(/```\s*$/i, '').trim();
 
