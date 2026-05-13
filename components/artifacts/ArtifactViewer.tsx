@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { FileText, Map, PieChart } from "lucide-react";
 import { MarkdownRenderer } from "@/components/shared/MarkdownRenderer";
 import { ARTIFACTS } from "@/lib/constants";
 import type { ArtifactId, AnalysisResult } from "@/lib/types";
@@ -50,11 +51,14 @@ export function ArtifactViewer({ result, className }: ArtifactViewerProps) {
               value={artifact.id}
               className={cn(
                 "rounded-none border-b-2 border-transparent px-3 py-2",
-                "text-xs font-display font-medium text-muted-foreground",
+                "text-xs font-display font-medium text-muted-foreground flex items-center gap-1.5",
                 "data-[state=active]:border-terracotta data-[state=active]:text-foreground",
                 "hover:text-foreground transition-colors duration-150"
               )}
             >
+              {artifact.id === "pitchDeck" && <FileText className="w-3.5 h-3.5" />}
+              {artifact.id === "roadmap" && <Map className="w-3.5 h-3.5" />}
+              {artifact.id === "budget" && <PieChart className="w-3.5 h-3.5" />}
               {artifact.label}
             </TabsTrigger>
           ))}
@@ -81,7 +85,7 @@ export function ArtifactViewer({ result, className }: ArtifactViewerProps) {
                   </p>
                   <ScrollArea className="h-[calc(100vh-24rem)]">
                     <MarkdownRenderer
-                      content={result[ARTIFACT_KEY_MAP[artifact.id]]}
+                      content={String(result[ARTIFACT_KEY_MAP[artifact.id]] || "")}
                     />
                   </ScrollArea>
                 </motion.div>

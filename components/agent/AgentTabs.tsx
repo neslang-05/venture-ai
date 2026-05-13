@@ -24,33 +24,38 @@ const AGENT_CONTENT_MAP: Record<AgentId, keyof AnalysisResult> = {
 export function AgentTabs({ result, className }: AgentTabsProps) {
   const [activeId, setActiveId] = useState<AgentId>("ceo");
   const activeAgent = AGENTS.find((a) => a.id === activeId)!;
-  const content = result[AGENT_CONTENT_MAP[activeId]];
+  const content = String(result[AGENT_CONTENT_MAP[activeId]] || "");
 
   return (
-    <div className={cn("flex flex-col gap-0 lg:flex-row lg:gap-6", className)}>
-      {/* Left: Agent navigation */}
-      <aside className="lg:w-56 shrink-0">
-        <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3 px-1">
-          Agents
-        </p>
-        <nav aria-label="Agent analysis navigation" className="space-y-1">
-          {AGENTS.map((agent) => (
-            <AgentCard
+    <div className={cn("flex flex-col h-full", className)}>
+      <div className="flex items-center gap-4 overflow-x-auto border-b border-border hide-scrollbar">
+        {AGENTS.map((agent) => {
+          const isActive = activeId === agent.id;
+          return (
+            <button
               key={agent.id}
-              agent={agent}
-              content={result[AGENT_CONTENT_MAP[agent.id]]}
-              isActive={activeId === agent.id}
               onClick={() => setActiveId(agent.id)}
-            />
-          ))}
-        </nav>
-      </aside>
+              className={cn(
+                "flex items-center gap-2 px-4 py-3 text-xs font-display font-medium whitespace-nowrap transition-colors relative",
+                isActive 
+                  ? "text-foreground bg-accent/50" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
+              )}
+            >
+              <span className="font-mono text-xs opacity-70">{agent.symbol}</span>
+              {agent.name}
+              {isActive && (
+                <motion.div
+                  layoutId="activeAgentTab"
+                  className="absolute top-0 left-0 right-0 h-[2px] bg-foreground"
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
-      {/* Divider */}
-      <div className="hidden lg:block w-px bg-border shrink-0" aria-hidden="true" />
-
-      {/* Right: Content */}
-      <main className="flex-1 min-w-0" aria-label={`${activeAgent.name} analysis`}>
+      <main className="flex-1 min-w-0 mt-4 h-full overflow-y-auto" aria-label={`${activeAgent.name} analysis`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeId}
@@ -58,7 +63,6 @@ export function AgentTabs({ result, className }: AgentTabsProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="h-full"
           >
             <AnalysisViewer agent={activeAgent} content={content} />
           </motion.div>

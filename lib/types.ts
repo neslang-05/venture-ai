@@ -29,6 +29,14 @@ export interface AnalysisRequest {
   category: StartupCategory;
 }
 
+export interface AnalysisScores {
+  severityScore: number;
+  tamScore: number;
+  whitespaceScore: number;
+  frequencyScore: number;
+  itchScore: number;
+}
+
 export interface AnalysisResult {
   startupIdea: string;
   ceoAnalysis: string;
@@ -39,6 +47,7 @@ export interface AnalysisResult {
   pitchDeck: string;
   roadmap: string;
   budget: string;
+  scores?: AnalysisScores;
 }
 
 export interface SavedAnalysis {

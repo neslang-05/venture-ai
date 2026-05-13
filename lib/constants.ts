@@ -138,24 +138,24 @@ export const ARTIFACTS: Artifact[] = [
 
 export const EXAMPLE_IDEAS: { idea: string; category: StartupCategory }[] = [
   {
-    idea: "AI-powered vernacular language tutor for rural India using WhatsApp",
-    category: "Edtech",
+    idea: "Why do freelancers ghost projects after partial payments without accountability systems?",
+    category: "B2B",
   },
   {
-    idea: "Embedded finance platform for kiryana stores in tier-2 cities",
-    category: "Fintech",
+    idea: "Why is it so hard for independent creators to discover and manage brand sponsorships without agency fees?",
+    category: "Other",
   },
   {
-    idea: "B2B SaaS for automated GST reconciliation and compliance for SMEs",
+    idea: "Why do small ecommerce brands struggle with dead inventory and reverse logistics optimization?",
+    category: "Ecommerce",
+  },
+  {
+    idea: "Why is it difficult for remote teams to serendipitously collaborate and brainstorm like in a physical office?",
     category: "SaaS",
   },
   {
-    idea: "Precision agriculture drone network with crop disease AI for small farmers",
-    category: "AI",
-  },
-  {
-    idea: "Telemedicine platform specialising in mental health for college students",
-    category: "Healthtech",
+    idea: "Why do local restaurants lack affordable, automated tools for dynamic pricing during off-peak hours?",
+    category: "SaaS",
   },
 ];
 

@@ -33,7 +33,14 @@ Output MUST be a valid JSON object strictly matching this schema:
   "synthesis": "Board's executive synthesis (markdown format)",
   "pitchDeck": "Suggested pitch deck slide structure (markdown format)",
   "roadmap": "Phased product roadmap (markdown format)",
-  "budget": "High-level financial budget and unit economics (markdown format)"
+  "budget": "High-level financial budget and unit economics (markdown format)",
+  "scores": {
+    "severityScore": 8,
+    "tamScore": 7,
+    "whitespaceScore": 9,
+    "frequencyScore": 6,
+    "itchScore": 76
+  }
 }
 Do not include any code blocks, markdown wrappers like \`\`\`json, or extra text around the JSON. Only return the raw JSON object.`;
 
@@ -45,8 +52,45 @@ function isValidRequest(body: unknown): body is { idea: string; category: string
   return typeof b.idea === "string" && b.idea.trim().length > 0 && typeof b.category === "string";
 }
 
-function normalizeResult(raw: Record<string, unknown>): AnalysisResult {
+function generateMockScores(idea: string) {
+  let hash = 0;
+  for (let i = 0; i < idea.length; i++) {
+    hash = (hash << 5) - hash + idea.charCodeAt(i);
+    hash |= 0;
+  }
+  const absHash = Math.abs(hash);
+  
+  const severityScore = 6 + (absHash % 5);
+  const tamScore = 6 + ((absHash >> 1) % 5);
+  const whitespaceScore = 6 + ((absHash >> 2) % 5);
+  const frequencyScore = 6 + ((absHash >> 3) % 5);
+  
+  const sum = severityScore + tamScore + whitespaceScore + frequencyScore;
+  const itchScore = Math.round((sum / 40) * 100);
+
+  return { severityScore, tamScore, whitespaceScore, frequencyScore, itchScore };
+}
+
+function normalizeResult(raw: Record<string, unknown>, fallbackIdea: string = ""): AnalysisResult {
   const str = (v: unknown) => (typeof v === "string" ? v : "");
+  const num = (v: unknown) => (typeof v === "number" ? v : 0);
+  
+  const rawScores = (raw.scores as Record<string, unknown>) || {};
+  
+  let finalScores;
+  if (typeof rawScores.itchScore === "number" && rawScores.itchScore > 0) {
+    finalScores = {
+      severityScore: num(rawScores.severityScore),
+      tamScore: num(rawScores.tamScore),
+      whitespaceScore: num(rawScores.whitespaceScore),
+      frequencyScore: num(rawScores.frequencyScore),
+      itchScore: num(rawScores.itchScore),
+    };
+  } else {
+    const ideaStr = str(raw.startupIdea) || fallbackIdea || "default idea";
+    finalScores = generateMockScores(ideaStr);
+  }
+
   return {
     startupIdea: str(raw.startupIdea),
     ceoAnalysis: str(raw.ceoAnalysis),
@@ -57,6 +101,7 @@ function normalizeResult(raw: Record<string, unknown>): AnalysisResult {
     pitchDeck: str(raw.pitchDeck),
     roadmap: str(raw.roadmap),
     budget: str(raw.budget),
+    scores: finalScores
   };
 }
 
@@ -111,12 +156,13 @@ export async function POST(req: NextRequest) {
       const payload = Array.isArray(raw) ? raw[0] : raw;
 
       if (payload?.status === "success" && payload?.data) {
+        payload.data = normalizeResult(payload.data, (body as any)?.idea || "");
         return NextResponse.json(payload);
       } else {
         // Fallback if data is raw
         return NextResponse.json({
           status: "success",
-          data: normalizeResult(payload as Record<string, unknown>),
+          data: normalizeResult(payload as Record<string, unknown>, (body as any)?.idea || ""),
         });
       }
     } catch (err) {

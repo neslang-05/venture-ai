@@ -11,6 +11,7 @@ import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { IdeaInput } from "@/components/workflow/IdeaInput";
 import { WorkflowTimeline } from "@/components/workflow/WorkflowTimeline";
 import { LoadingOrchestrator } from "@/components/workflow/LoadingOrchestrator";
+import { ScoresVisualizer } from "@/components/workflow/ScoresVisualizer";
 import { AgentTabs } from "@/components/agent/AgentTabs";
 import { ArtifactViewer } from "@/components/artifacts/ArtifactViewer";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
@@ -196,29 +197,31 @@ export default function DashboardPage() {
           >
             <div className="max-w-4xl mx-auto px-5 py-6 pb-24 lg:pb-8 space-y-6">
 
-              {/* Idea input — always visible */}
-              <section aria-labelledby="input-heading">
-                <div className="flex items-center gap-2 mb-3">
-                  <Cpu className="w-3.5 h-3.5 text-terracotta" aria-hidden="true" />
-                  <h1
-                    id="input-heading"
-                    className="font-mono text-xs text-muted-foreground uppercase tracking-widest"
-                  >
-                    {isCompleted ? "Refine idea" : "Submit idea"}
-                  </h1>
-                </div>
-                <div className="border border-border rounded-sm p-4 bg-card">
-                  <IdeaInput
-                    value={idea}
-                    category={category}
-                    onIdeaChange={setIdea}
-                    onCategoryChange={setCategory}
-                    onSubmit={handleSubmit}
-                    isLoading={isLoading}
-                    showExamples={status === "idle"}
-                  />
-                </div>
-              </section>
+              {/* Idea input — only visible when NOT completed */}
+              {!isCompleted && (
+                <section aria-labelledby="input-heading">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Cpu className="w-3.5 h-3.5 text-terracotta" aria-hidden="true" />
+                    <h1
+                      id="input-heading"
+                      className="font-mono text-xs text-muted-foreground uppercase tracking-widest"
+                    >
+                      Submit idea
+                    </h1>
+                  </div>
+                  <div className="border border-border rounded-sm p-4 bg-card">
+                    <IdeaInput
+                      value={idea}
+                      category={category}
+                      onIdeaChange={setIdea}
+                      onCategoryChange={setCategory}
+                      onSubmit={handleSubmit}
+                      isLoading={isLoading}
+                      showExamples={status === "idle"}
+                    />
+                  </div>
+                </section>
+              )}
 
               {/* ── Loading state ─────────────────────────────────────── */}
               <AnimatePresence mode="wait">
@@ -298,25 +301,39 @@ export default function DashboardPage() {
                     transition={{ duration: 0.4 }}
                     aria-label="Analysis results"
                   >
-                    {/* Completed workflow timeline */}
-                    <div className="border border-border rounded-sm bg-card p-4 mb-5">
-                      <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">
-                        Workflow complete
+                    {/* Header Idea Title */}
+                    <div className="mb-6">
+                      <h2 className="text-2xl font-display font-semibold text-foreground">
+                        {result.startupIdea || idea}
+                      </h2>
+                      <p className="text-sm text-muted-foreground font-mono uppercase tracking-widest mt-1">
+                        {category}
                       </p>
-                      <WorkflowTimeline
-                        status="completed"
-                        currentStage={null}
-                      />
                     </div>
 
-                    <Separator className="my-1" />
-
-                    {/* Agent tabs */}
-                    <ErrorBoundary>
-                      <div className="border border-border rounded-sm bg-card p-4 mt-5">
-                        <AgentTabs result={result} />
+                    {/* Scores Overview */}
+                    {result.scores && (
+                      <div className="border border-border rounded-sm bg-card p-4 mb-6">
+                        <ScoresVisualizer scores={result.scores} />
                       </div>
-                    </ErrorBoundary>
+                    )}
+
+                    {/* Two panel layout */}
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+                      {/* Left Panel: Agent Tabs */}
+                      <ErrorBoundary>
+                        <div className="border border-border rounded-sm bg-card flex flex-col overflow-hidden h-[600px]">
+                          <AgentTabs result={result} className="h-full" />
+                        </div>
+                      </ErrorBoundary>
+
+                      {/* Right Panel: Artifacts */}
+                      <ErrorBoundary>
+                        <div className="border border-border rounded-sm bg-card flex flex-col overflow-hidden h-[600px]">
+                          <ArtifactViewer result={result} className="h-full" />
+                        </div>
+                      </ErrorBoundary>
+                    </div>
                   </motion.section>
                 )}
 
@@ -346,22 +363,7 @@ export default function DashboardPage() {
             </div>
           </main>
 
-          {/* ── Right: Artifact panel (desktop xl+) ────────────────────── */}
-          {isCompleted && result && (
-            <motion.aside
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="hidden xl:flex flex-col w-96 shrink-0 border-l border-border overflow-y-auto"
-              aria-label="Strategic artefacts panel"
-            >
-              <div className="p-5">
-                <ErrorBoundary>
-                  <ArtifactViewer result={result} />
-                </ErrorBoundary>
-              </div>
-            </motion.aside>
-          )}
+
         </div>
       </div>
 
