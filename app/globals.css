@@ -51,77 +51,41 @@
   --font-tamil: "Noto Sans Tamil", sans-serif;
 }
 
-/* ─── Dark theme (default) ─────────────────────── */
+/* ─── Light theme (default) ─────────────────────── */
 :root {
-  color-scheme: dark;
-  --background: #0F0F10;
-  --foreground: #F5F5F4;
-  --card: #141415;
-  --card-foreground: #F5F5F4;
-  --popover: #1B1B1D;
-  --popover-foreground: #F5F5F4;
-  --primary: #F5F5F4;
-  --primary-foreground: #0F0F10;
-  --secondary: #1B1B1D;
-  --secondary-foreground: #F5F5F4;
-  --muted: #1B1B1D;
-  --muted-foreground: #7A7A7E;
-  --accent: #242427;
-  --accent-foreground: #F5F5F4;
-  --destructive: #B55239;
-  --border: #2A2A2D;
-  --input: #1B1B1D;
-  --ring: #3F4C8A;
-  --radius: 0.25rem;
-  /* Indian accent colors -> New colors */
-  --terracotta: #FF4F00; /* Poppy Orange */
-  --ochre: #8E9BAE; /* Neutral */
-  --indigo-accent: #0A192F; /* Navy */
-  --saffron: #FF8C00;
-  /* Sidebar */
-  --sidebar: #141415;
-  --sidebar-foreground: #F5F5F4;
-  --sidebar-primary: #F5F5F4;
-  --sidebar-primary-foreground: #0F0F10;
-  --sidebar-accent: #1B1B1D;
-  --sidebar-accent-foreground: #F5F5F4;
-  --sidebar-border: #2A2A2D;
-  --sidebar-ring: #3F4C8A;
-}
-
-/* ─── Light theme ──────────────────────────────── */
-.light {
   color-scheme: light;
-  --background: #FAFAF9;
+  --background: #F0EEE9;
   --foreground: #09090B;
-  --card: #FFFFFF;
+  --card: #F7F6F3;
   --card-foreground: #09090B;
-  --popover: #FFFFFF;
+  --popover: #F7F6F3;
   --popover-foreground: #09090B;
   --primary: #09090B;
-  --primary-foreground: #FAFAF9;
-  --secondary: #E4E4E7;
+  --primary-foreground: #F0EEE9;
+  --secondary: #E6E4DD;
   --secondary-foreground: #09090B;
-  --muted: #E4E4E7;
+  --muted: #E6E4DD;
   --muted-foreground: #52525B;
-  --accent: #E4E4E7;
+  --accent: #E6E4DD;
   --accent-foreground: #09090B;
   --destructive: #991B1B;
-  --border: #D4D4D8;
+  --border: #D8D6CD;
   --input: #FFFFFF;
   --ring: #312E81;
   --radius: 0.25rem;
-  --terracotta: #FF4F00;
-  --ochre: #475569;
-  --indigo-accent: #1E3A8A;
-  --saffron: #D97706;
-  --sidebar: #F4F4F5;
+  /* Indian accent colors -> New colors */
+  --terracotta: #C64A36; /* Terracotta Red */
+  --ochre: #C08422; /* Ochre Yellow */
+  --indigo-accent: #303F9F; /* Indigo Blue */
+  --saffron: #E67E22; /* Saffron Orange */
+  /* Sidebar */
+  --sidebar: #E8E6DF;
   --sidebar-foreground: #09090B;
   --sidebar-primary: #09090B;
-  --sidebar-primary-foreground: #FAFAF9;
-  --sidebar-accent: #E4E4E7;
+  --sidebar-primary-foreground: #F0EEE9;
+  --sidebar-accent: #D8D6CD;
   --sidebar-accent-foreground: #09090B;
-  --sidebar-border: #D4D4D8;
+  --sidebar-border: #C9C7BD;
   --sidebar-ring: #312E81;
 }
 
