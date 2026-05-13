@@ -49,7 +49,7 @@ export function ScoresVisualizer({ scores, className }: ScoresVisualizerProps) {
         <div className="col-span-2 border border-terracotta/30 bg-terracotta/5 rounded-sm p-5 flex items-center justify-between">
           <div>
             <h3 className="font-display text-lg font-semibold text-foreground">
-              Total Itch Score
+              Total Validation Score
             </h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-sm">
               Composite viability metric based on severity, market size, competition, and frequency.

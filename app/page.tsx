@@ -7,7 +7,6 @@ import { IdeaInput } from "@/components/workflow/IdeaInput";
 import { useAnalysisStore } from "@/store/analysis-store";
 import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { APP_NAME, APP_TAGLINE, AGENTS } from "@/lib/constants";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 // ─── Fade-in stagger helper ───────────────────────────────────────────────────
@@ -92,7 +91,7 @@ export default function HomePage() {
           </span>
         </div>
         <nav className="flex items-center gap-5" aria-label="Top navigation">
-          <ThemeToggle />
+
           <a
             href="/dashboard"
             className="text-xs text-muted-foreground hover:text-foreground transition-colors font-display"

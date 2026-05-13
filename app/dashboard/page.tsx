@@ -15,7 +15,6 @@ import { ScoresVisualizer } from "@/components/workflow/ScoresVisualizer";
 import { AgentTabs } from "@/components/agent/AgentTabs";
 import { ArtifactViewer } from "@/components/artifacts/ArtifactViewer";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
@@ -123,15 +122,11 @@ export default function DashboardPage() {
             <p className="font-display text-sm font-medium text-foreground">
               Analysis
             </p>
-            {isCompleted && result && (
-              <span className="font-mono text-xs text-muted-foreground hidden sm:inline">
-                — {result.startupIdea || idea}
-              </span>
-            )}
+            {/* Prompt removed from header to prevent clutter as requested */}
           </div>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle className="lg:hidden mr-2" />
+
             {isCompleted && result && (
               <>
                 <Button
@@ -303,7 +298,7 @@ export default function DashboardPage() {
                   >
                     {/* Header Idea Title */}
                     <div className="mb-6">
-                      <h2 className="text-2xl font-display font-semibold text-foreground">
+                      <h2 className="text-2xl font-display font-semibold text-foreground line-clamp-2">
                         {result.startupIdea || idea}
                       </h2>
                       <p className="text-sm text-muted-foreground font-mono uppercase tracking-widest mt-1">
