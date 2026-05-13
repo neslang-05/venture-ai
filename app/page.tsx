@@ -16,7 +16,7 @@ const fadeUp: Variants = {
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.08, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { delay: i * 0.25, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] },
   }),
 };
 
@@ -167,26 +167,76 @@ export default function HomePage() {
               உத்வேகம் · ஆய்வு · உத்தி — Idea · Analysis · Strategy
             </motion.p>
 
-            {/* Input form */}
+            {/* Action */}
             <motion.div
               custom={3}
               variants={fadeUp}
               initial="hidden"
               animate="show"
-              className="border border-border rounded-sm p-5 bg-card"
+              className="mt-4"
             >
-              <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-3">
-                Enter your startup idea
-              </p>
-              <IdeaInput
-                value={idea}
-                category={category}
-                onIdeaChange={setIdea}
-                onCategoryChange={setCategory}
-                onSubmit={handleSubmit}
-                showExamples
-              />
+              <button
+                onClick={() => {
+                  document.getElementById("chat-box-section")?.scrollIntoView({ behavior: "smooth" });
+                  setTimeout(() => document.getElementById("startup-idea")?.focus(), 500);
+                }}
+                className={cn(
+                  "inline-flex items-center gap-2 px-8 py-4",
+                  "bg-terracotta text-white rounded-sm",
+                  "font-display text-lg font-semibold",
+                  "hover:bg-terracotta/90 transition-colors shadow-lg",
+                  "focus-visible:outline-2 focus-visible:outline-offset-2"
+                )}
+              >
+                Get Started
+                <ArrowRight className="w-5 h-5" aria-hidden="true" />
+              </button>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── Workflow visualisation ───────────────────────────────────────── */}
+        <section aria-labelledby="workflow-heading" className="border-b border-border bg-card/50">
+          <div className="max-w-3xl mx-auto px-5 lg:px-10 py-16">
+            <p
+              id="workflow-heading"
+              className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-8 text-center"
+            >
+              How it works
+            </p>
+            <ol className="relative space-y-0" aria-label="Analysis workflow steps">
+              {[
+                { n: "01", label: "Submit idea", detail: "Describe your startup concept. The richer the detail, the better the output." },
+                { n: "02", label: "Agents activate", detail: "CEO, CTO, Marketing, and Finance agents run their analysis sequentially via n8n." },
+                { n: "03", label: "Synthesis", detail: "The executive synthesis agent integrates all perspectives into a unified recommendation." },
+                { n: "04", label: "Artefacts generated", detail: "Pitch deck, roadmap, and budget documents are auto-generated in markdown." },
+              ].map((step, i) => (
+                <motion.li
+                  key={step.n}
+                  custom={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className={cn(
+                    "flex gap-6 py-5",
+                    i < 3 && "border-b border-border/50"
+                  )}
+                >
+                  <span className="font-mono text-sm text-terracotta shrink-0 w-8 pt-0.5 font-semibold">
+                    {step.n}
+                  </span>
+                  <div>
+                    <p className="font-display text-base font-semibold text-foreground">
+                      {step.label}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                      {step.detail}
+                    </p>
+                  </div>
+                </motion.li>
+              ))}
+            </ol>
           </div>
         </section>
 
@@ -272,76 +322,39 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── Workflow visualisation ───────────────────────────────────────── */}
-        <section aria-labelledby="workflow-heading">
-          <div className="max-w-3xl mx-auto px-5 lg:px-10 py-12">
-            <p
-              id="workflow-heading"
-              className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-6"
+        {/* ── Chat Box (Analysis Input) ──────────────────────────────────── */}
+        <section
+          id="chat-box-section"
+          className="border-t border-border bg-card py-20 lg:py-32"
+        >
+          <div className="max-w-3xl mx-auto px-5 lg:px-10">
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              variants={fadeUp}
+              custom={0}
             >
-              The workflow
-            </p>
-            <ol className="relative space-y-0" aria-label="Analysis workflow steps">
-              {[
-                { n: "01", label: "Submit idea", detail: "Describe your startup concept. The richer the detail, the better the output." },
-                { n: "02", label: "Agents activate", detail: "CEO, CTO, Marketing, and Finance agents run their analysis sequentially via n8n." },
-                { n: "03", label: "Synthesis", detail: "The executive synthesis agent integrates all perspectives into a unified recommendation." },
-                { n: "04", label: "Artefacts generated", detail: "Pitch deck, roadmap, and budget documents are auto-generated in markdown." },
-                { n: "05", label: "Explore & refine", detail: "Switch between agent tabs, view artefacts, and save analyses to history." },
-              ].map((step, i) => (
-                <motion.li
-                  key={step.n}
-                  custom={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                  className={cn(
-                    "flex gap-5 py-4",
-                    i < 4 && "border-b border-border/50"
-                  )}
-                >
-                  <span className="font-mono text-xs text-terracotta shrink-0 w-6 pt-0.5">
-                    {step.n}
-                  </span>
-                  <div>
-                    <p className="font-display text-sm font-semibold text-foreground">
-                      {step.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                      {step.detail}
-                    </p>
-                  </div>
-                </motion.li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        {/* ── CTA ─────────────────────────────────────────────────────────── */}
-        <section className="border-t border-border bg-card">
-          <div className="max-w-3xl mx-auto px-5 lg:px-10 py-12 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div>
-              <p className="font-display text-xl font-semibold text-foreground">
+              <p className="font-display text-3xl lg:text-4xl font-semibold text-foreground mb-4 text-center">
                 Ready to think strategically?
               </p>
-              <p className="text-muted-foreground text-sm mt-1">
-                Submit your first idea — it takes 30–60 seconds.
+              <p className="text-muted-foreground text-center text-base mb-12">
+                Submit your idea below. It takes 30–60 seconds for the council to process.
               </p>
-            </div>
-            <a
-              href="/dashboard"
-              className={cn(
-                "inline-flex items-center gap-2 px-5 py-3",
-                "bg-foreground text-background rounded-sm",
-                "font-display text-sm font-medium",
-                "hover:bg-foreground/90 transition-colors",
-                "focus-visible:outline-2 focus-visible:outline-offset-2"
-              )}
-            >
-              Start analysing
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </a>
+              <div className="border border-border rounded-sm p-6 bg-background shadow-xl">
+                <p className="text-xs font-mono text-terracotta uppercase tracking-widest mb-4">
+                  Enter your startup idea
+                </p>
+                <IdeaInput
+                  value={idea}
+                  category={category}
+                  onIdeaChange={setIdea}
+                  onCategoryChange={setCategory}
+                  onSubmit={handleSubmit}
+                  showExamples
+                />
+              </div>
+            </motion.div>
           </div>
         </section>
 

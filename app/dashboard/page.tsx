@@ -96,6 +96,13 @@ export default function DashboardPage() {
     }
   }, [idea, category, status, reset, setStatus, setLoadingStage, setError, setResult]);
 
+  // Auto-start analysis if routed with an existing idea and status is idle
+  useEffect(() => {
+    if (status === "idle" && idea.trim().length >= 20) {
+      handleSubmit();
+    }
+  }, [status, idea, handleSubmit]);
+
   // re-apply idea from store if navigated from landing page
   const isLoading = status === "loading";
   const isCompleted = status === "completed";

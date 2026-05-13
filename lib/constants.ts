@@ -2,7 +2,7 @@ import type { Agent, Artifact, LoadingStage, StartupCategory } from "./types";
 
 // ─── App Meta ─────────────────────────────────────────────────────────────────
 
-export const APP_NAME = "वेंचर / Venture";
+export const APP_NAME = "The Boardroom";
 export const APP_TAGLINE = "Multi-Agent Startup Intelligence";
 export const APP_DESCRIPTION =
   "A calm operating system for startup thinking. Submit an idea; watch CEO, CTO, Marketing, and Finance agents synthesise strategic intelligence.";

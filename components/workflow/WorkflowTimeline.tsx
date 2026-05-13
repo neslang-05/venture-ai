@@ -48,14 +48,14 @@ export function WorkflowTimeline({
             <div className="mt-0.5 shrink-0">
               {isDone ? (
                 <CheckCircle2
-                  className="w-4 h-4 text-ochre"
+                  className="w-4 h-4 text-foreground"
                   aria-label="Completed"
                 />
               ) : isActive ? (
-                <Loader2
-                  className="w-4 h-4 text-terracotta animate-spin"
-                  aria-label="In progress"
-                />
+                <div className="relative flex h-4 w-4 items-center justify-center" aria-label="Thinking...">
+                  <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-terracotta opacity-60"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-terracotta"></span>
+                </div>
               ) : (
                 <Circle
                   className="w-4 h-4 text-border"

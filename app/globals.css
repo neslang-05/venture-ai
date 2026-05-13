@@ -73,11 +73,11 @@
   --input: #1B1B1D;
   --ring: #3F4C8A;
   --radius: 0.25rem;
-  /* Indian accent colors */
-  --terracotta: #B55239;
-  --ochre: #C79A3B;
-  --indigo-accent: #3F4C8A;
-  --saffron: #D97706;
+  /* Indian accent colors -> New colors */
+  --terracotta: #FF4F00; /* Poppy Orange */
+  --ochre: #8E9BAE; /* Neutral */
+  --indigo-accent: #0A192F; /* Navy */
+  --saffron: #FF8C00;
   /* Sidebar */
   --sidebar: #141415;
   --sidebar-foreground: #F5F5F4;
@@ -111,10 +111,10 @@
   --input: #FFFFFF;
   --ring: #312E81;
   --radius: 0.25rem;
-  --terracotta: #9A3412;
-  --ochre: #A16207;
-  --indigo-accent: #312E81;
-  --saffron: #B45309;
+  --terracotta: #FF4F00;
+  --ochre: #475569;
+  --indigo-accent: #1E3A8A;
+  --saffron: #D97706;
   --sidebar: #F4F4F5;
   --sidebar-foreground: #09090B;
   --sidebar-primary: #09090B;

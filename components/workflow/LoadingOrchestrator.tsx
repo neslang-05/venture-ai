@@ -45,8 +45,13 @@ export function LoadingOrchestrator({
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-terracotta opacity-60" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-terracotta" />
           </span>
-          <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
-            Active
+          <p className="font-mono text-xs text-terracotta uppercase tracking-widest flex items-center gap-1.5">
+            AI Thinking
+            <span className="flex items-center gap-0.5">
+              <span className="w-1 h-1 bg-terracotta rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-1 h-1 bg-terracotta rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-1 h-1 bg-terracotta rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+            </span>
           </p>
         </div>
 
@@ -82,7 +87,7 @@ export function LoadingOrchestrator({
               key={s.id}
               className={cn(
                 "h-0.5 flex-1 rounded-full transition-colors duration-500",
-                isDone ? "bg-ochre" : isActive ? "bg-terracotta" : "bg-border"
+                isDone ? "bg-foreground" : isActive ? "bg-terracotta" : "bg-border"
               )}
               animate={isActive ? { opacity: [0.5, 1, 0.5] } : {}}
               transition={isActive ? { repeat: Infinity, duration: 1.5 } : {}}
