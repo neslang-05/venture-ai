@@ -1,0 +1,1024 @@
+{
+  "name": "Multi-Agent Startup CEO Simulator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "startup-ceo-simulator",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1d8d305e-3392-4467-b3ec-09f189db7746",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        688
+      ],
+      "webhookId": "d4c32fdf-9f32-44c7-89d0-e23333e7fb6f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a ruthless, visionary CEO with 20 years of scaling startups. Your job: Evaluate the business viability, set strategic direction, and break down the core problem. Be direct, critical, and strategic. Output: Strategic thesis (200 words max)\n\nStartup Idea: {{ $json.body.idea ?? $json.idea }}",
+        "options": {
+          "systemMessage": "You are a ruthless, visionary CEO with 20 years of scaling startups. Evaluate business viability and set strategic direction."
+        }
+      },
+      "id": "95372430-683c-4db9-99b9-8d6382a0a5a2",
+      "name": "CEO Agent (Strategist)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        128
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "nvidia/nemotron-nano-12b-v2-vl:free",
+          "mode": "list",
+          "cachedResultName": "nvidia/nemotron-nano-12b-v2-vl:free"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "c868f21f-74a7-4bd7-9d97-68cf90085c45",
+      "name": "OpenAI Model (Agents)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        352
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "SQh9bqJMf7jXAxEz",
+          "name": "OpenAI account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "56433edf-5cb6-41b1-8eb2-0718ce35f8f7",
+      "name": "Wait 5 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1008,
+        1008
+      ],
+      "webhookId": "74304e96-45e6-4f80-aad3-8061fea065dc"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a skeptical, detail-obsessed CTO. Your job: Identify technical feasibility, suggest MVP tech stack (specific tools), estimate development weeks, and flag technical risks. Output: Technical assessment (200 words max)\n\nStartup Idea: {{ $json.body.idea ?? $json.idea }}",
+        "options": {
+          "systemMessage": "You are a skeptical, detail-obsessed CTO. Identify technical feasibility and suggest MVP tech stack."
+        }
+      },
+      "id": "dda58b4f-3820-4de7-af86-0bdc86a4b5ef",
+      "name": "CTO Agent (Architect)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        528
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a data-driven, slightly aggressive Marketing Head (ex-HubSpot). Your job: Define target audience personas (2 minimum), channel strategy (paid/organic), and viral loop potential. Output: Marketing playbook (200 words max)\n\nStartup Idea: {{ $json.body.idea ?? $json.idea }}",
+        "options": {
+          "systemMessage": "You are a data-driven, slightly aggressive Marketing Head. Define target audience and channel strategy."
+        }
+      },
+      "id": "993de3a3-ef97-4c54-97c2-a70a33799326",
+      "name": "Marketing Agent (Growth)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        720
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a conservative, spreadsheet-obsessed Finance Manager (ex-McKinsey). Your job: Calculate unit economics (CAC, LTV), burn rate projection for 6 months, and break-even point. Output: Financial model (200 words max plus 3 bullet points of key numbers)\n\nStartup Idea: {{ $json.body.idea ?? $json.idea }}",
+        "options": {
+          "systemMessage": "You are a conservative, spreadsheet-obsessed Finance Manager. Calculate unit economics and burn rate."
+        }
+      },
+      "id": "ad608025-41dd-42c1-b9f9-18d1c2c7270c",
+      "name": "Finance Agent (Numbers)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        912
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            },
+            {
+              "fieldToAggregate": "role"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "180de9a0-8e3b-41b2-8db7-ff109743e647",
+      "name": "Aggregate Agent Outputs",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Given the CEO, CTO, Marketing, and Finance perspectives below, identify:\n(1) Top 3 risks they collectively agree on\n(2) Top 3 opportunities\n(3) One major disagreement that needs resolution\n\nCEO Analysis: {{ $json.output[0] }}\nCTO Analysis: {{ $json.output[1] }}\nMarketing Analysis: {{ $json.output[2] }}\nFinance Analysis: {{ $json.output[3] }}",
+        "options": {
+          "systemMessage": "You are a neutral facilitator synthesizing multiple executive perspectives. Identify consensus and conflicts."
+        }
+      },
+      "id": "86bb41fb-84ff-40af-a79c-e458bad73756",
+      "name": "Synthesis Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1456,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "nvidia/nemotron-3-super-120b-a12b:free",
+          "mode": "list",
+          "cachedResultName": "nvidia/nemotron-3-super-120b-a12b:free"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "0994542a-6bad-4c02-81ef-d65dc8f1c104",
+      "name": "OpenAI Model (Synthesis)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1536,
+        1232
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "lwXDK2SQo4VaTlb4",
+          "name": "OpenAI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a 6-slide pitch deck outline: (1) Problem, (2) Solution, (3) Market Size, (4) Business Model, (5) Traction Plan, (6) Ask. Output as Markdown.\n\nIdea: {{ $(\"Webhook Trigger\").item.json.body.idea ?? $(\"Webhook Trigger\").item.json.idea }}\n\nCEO: {{ $(\"Aggregate Agent Outputs\").item.json.output[0] }}",
+        "options": {
+          "systemMessage": "You are a pitch deck expert. Create compelling, concise slides."
+        }
+      },
+      "id": "8a0bbf6a-e85b-4596-ba51-d5f85a554510",
+      "name": "Pitch Deck Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1808,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "nvidia/nemotron-nano-9b-v2:free",
+          "mode": "list",
+          "cachedResultName": "nvidia/nemotron-nano-9b-v2:free"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "c50c7546-f89d-4564-871d-af48ab20a0fb",
+      "name": "OpenAI Model (Artifacts)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1888,
+        896
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "SQh9bqJMf7jXAxEz",
+          "name": "OpenAI account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "f41d6ad9-f5bd-4f9a-a255-5a24a634eba6",
+      "name": "Merge Artifacts",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a 6-month product roadmap: Months 1-2 (MVP), Months 3-4 (Growth), Months 5-6 (Monetization). Output as Markdown table.\n\nIdea: {{ $(\"Webhook Trigger\").item.json.body.idea ?? $(\"Webhook Trigger\").item.json.idea }}\n\nCTO: {{ $(\"Aggregate Agent Outputs\").item.json.output[1] }}",
+        "options": {
+          "systemMessage": "You are a product roadmap expert. Create a realistic development plan."
+        }
+      },
+      "id": "ba36d334-b920-4c23-a2d7-1721a9679f4a",
+      "name": "Roadmap Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1808,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a 6-month budget: Headcount, Software, Marketing, Cloud. Output as Markdown table.\n\nIdea: {{ $(\"Webhook Trigger\").item.json.body.idea ?? $(\"Webhook Trigger\").item.json.idea }}\n\nFinance: {{ $(\"Aggregate Agent Outputs\").item.json.output[3] }}",
+        "options": {
+          "systemMessage": "You are a financial planning expert. Create a realistic startup budget."
+        }
+      },
+      "id": "38516b92-5586-48c6-af89-2a5da7ff6a21",
+      "name": "Budget Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1808,
+        1264
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "startupIdea",
+              "value": "={{ $(\"Webhook Trigger\").item.json.body.idea ?? $(\"Webhook Trigger\").item.json.idea }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "ceoAnalysis",
+              "value": "={{ $(\"Aggregate Agent Outputs\").item.json.output[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "ctoAnalysis",
+              "value": "={{ $(\"Aggregate Agent Outputs\").item.json.output[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "marketingAnalysis",
+              "value": "={{ $(\"Aggregate Agent Outputs\").item.json.output[2] }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "financeAnalysis",
+              "value": "={{ $(\"Aggregate Agent Outputs\").item.json.output[3] }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "synthesis",
+              "value": "={{ $(\"Synthesis Agent\").item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "7",
+              "name": "pitchDeck",
+              "value": "={{ $(\"Pitch Deck Generator\").item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "8",
+              "name": "roadmap",
+              "value": "={{ $(\"Roadmap Generator\").item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "budget",
+              "value": "={{ $(\"Budget Generator\").item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f6dbaf35-046b-4911-8eb4-f91f016fbf9d",
+      "name": "Build Final JSON",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2384,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "9e1e8678-eb6d-4170-8a8a-ff258dc7b35a",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2608,
+        1072
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e215d55a-b292-4cc7-952d-8319c82974c5",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        208,
+        1904
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1r1kg8CfLUHZA2oN2tcXEbT84gg4lJ18bgRs_SR8qHR4",
+          "mode": "list",
+          "cachedResultName": "AgentFailures",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r1kg8CfLUHZA2oN2tcXEbT84gg4lJ18bgRs_SR8qHR4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r1kg8CfLUHZA2oN2tcXEbT84gg4lJ18bgRs_SR8qHR4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "timestamp"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "errorMessage",
+              "displayName": "errorMessage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "workflowId",
+              "displayName": "workflowId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "executionId",
+              "displayName": "executionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ffba0908-5a9a-4019-a64a-84f888ee38a6",
+      "name": "Log Error to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        1904
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mHV66hSyQRQl4Cbf",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Layer 1: Agent Debate\n\n4 specialized AI agents analyze the startup idea from different perspectives:\n- CEO (Strategy)\n- CTO (Technical)\n- Marketing (Growth)\n- Finance (Numbers)",
+        "height": 984,
+        "width": 300,
+        "color": 2
+      },
+      "id": "cf6aae9e-560d-4f34-9f4c-ad0545a94687",
+      "name": "Sticky Note b95d821d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Layer 2: Synthesis\n\nAfter all agents respond, synthesis identifies:\n- Top 3 risks (consensus)\n- Top 3 opportunities\n- Major disagreements",
+        "height": 200,
+        "width": 524,
+        "color": 3
+      },
+      "id": "9b50f499-f586-4929-96d1-1ea47d6b0499",
+      "name": "Sticky Note fc705783",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Layer 3: Artifacts\n\n3 parallel generators create:\n- Pitch Deck (6 slides)\n- Product Roadmap (6 months)\n- Budget Spreadsheet (6 months)",
+        "height": 792,
+        "width": 300,
+        "color": 4
+      },
+      "id": "b83b57ca-8396-44cd-b834-3d7580fcec35",
+      "name": "Sticky Note 3ea9a438",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🧪 TESTING GUIDE\n\n**Step 1: Activate Workflow**\n- Click \"Activate\" toggle (top-right)\n- Webhook URL will appear in Webhook Trigger node\n\n**Step 2: Get Webhook URL**\n- Click \"Webhook Trigger\" node\n- Copy the Production URL (e.g., https://your-n8n.app.n8n.cloud/webhook/startup-ceo-simulator)\n\n**Step 3: Test with cURL**\n```bash\ncurl -X POST https://your-n8n.app.n8n.cloud/webhook/startup-ceo-simulator \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"startupIdea\": \"An AI-powered platform that turns meeting transcripts into automated Jira tickets\"}'\n```\n\n**Step 4: Test with Postman**\n- Method: POST\n- URL: [your webhook URL]\n- Headers: Content-Type = application/json\n- Body (raw JSON):\n```json\n{\n  \"startupIdea\": \"An AI-powered platform that turns meeting transcripts into automated Jira tickets\"\n}\n```\n\n**Step 5: Monitor Execution**\n- Go to \"Executions\" tab (left sidebar)\n- Click latest execution to see:\n  - Each agent's analysis\n  - Synthesis output\n  - Generated artifacts\n\n**Expected Response Time:** 30-60 seconds\n\n**Success Indicators:**\n✅ All 4 agents return different perspectives\n✅ Synthesis identifies conflicts\n✅ 3 artifacts generated (pitch deck, roadmap, budget)\n✅ Final JSON contains all 9 fields",
+        "height": 200,
+        "width": 300,
+        "color": 5
+      },
+      "id": "de5ec352-bbc9-4913-868d-916d3dae31d5",
+      "name": "Sticky Note 5fdef319",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "id": "4ec8f3c7-a01e-4f20-b23f-5c0c9a40b64b",
+      "name": "Merge Agent Outputs",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        784,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "output",
+              "value": "CEO Agent failed - using fallback analysis",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "role",
+              "value": "CEO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1642f323-f3c0-4fab-bd4e-8d1664f8380f",
+      "name": "Handle CEO Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "output",
+              "value": "CTO Agent failed - using fallback analysis",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "role",
+              "value": "CTO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47a1d66c-6946-43eb-96c2-41a29e526cf0",
+      "name": "Handle CTO Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "output",
+              "value": "Marketing Agent failed - using fallback analysis",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "role",
+              "value": "Marketing",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5c889287-2ab2-4f8b-ba1f-939fd25b0858",
+      "name": "Handle Marketing Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "output",
+              "value": "Finance Agent failed - using fallback analysis",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "role",
+              "value": "Finance",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "031d66c2-4aa4-4937-99a5-4fe537cffac4",
+      "name": "Handle Finance Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        1680
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook Trigger": [
+      {
+        "json": {
+          "headers": {
+            "host": "dayananda-laishram.app.n8n.cloud",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36",
+            "content-length": "145",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "accept-language": "en-US,en;q=0.9",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "103.168.75.10",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "IN",
+            "cf-ray": "9fab63237eea4b61-BOM",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "origin": "http://localhost:5173",
+            "priority": "u=1, i",
+            "referer": "http://localhost:5173/",
+            "sec-ch-ua": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "103.168.75.10, 162.158.235.230",
+            "x-forwarded-host": "dayananda-laishram.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-83-57d7f444cb-x7lk6",
+            "x-is-trusted": "yes",
+            "x-real-ip": "103.168.75.10"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "idea": "agriverifier a platform for testing the paddy seed using image and upload a complaint to the goverment to take action ",
+            "category": "AI"
+          },
+          "webhookUrl": "https://dayananda-laishram.app.n8n.cloud/webhook/startup-ceo-simulator",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "CEO Agent (Strategist)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "CTO Agent (Architect)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Marketing Agent (Growth)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Finance Agent (Numbers)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CEO Agent (Strategist)": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model (Agents)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CEO Agent (Strategist)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "CTO Agent (Architect)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Marketing Agent (Growth)",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Finance Agent (Numbers)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Agent Outputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CTO Agent (Architect)": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Marketing Agent (Growth)": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Finance Agent (Numbers)": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Aggregate Agent Outputs": {
+      "main": [
+        [
+          {
+            "node": "Synthesis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthesis Agent": {
+      "main": [
+        [
+          {
+            "node": "Pitch Deck Generator",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Roadmap Generator",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Budget Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model (Synthesis)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Synthesis Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pitch Deck Generator": {
+      "main": [
+        [
+          {
+            "node": "Merge Artifacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model (Artifacts)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Pitch Deck Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Roadmap Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Budget Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Artifacts": {
+      "main": [
+        [
+          {
+            "node": "Build Final JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roadmap Generator": {
+      "main": [
+        [
+          {
+            "node": "Merge Artifacts",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Budget Generator": {
+      "main": [
+        [
+          {
+            "node": "Merge Artifacts",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Build Final JSON": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Log Error to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Agent Outputs": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle CEO Error": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle CTO Error": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Handle Marketing Error": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Handle Finance Error": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Outputs",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "23abd683-00dc-4d0c-83b0-21ad1f3fc519",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ee6044865cc2d36127c427ef4288ae9679d3606d5f2b14e5c3e53ec261dac1d"
+  },
+  "id": "ZbFsehsSq1VEFeJY",
+  "tags": []
+}
